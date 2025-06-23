@@ -97,27 +97,30 @@ ${batch.map((c, j) => `${j + 1}. ${c.jp}`).join("\n")}
 
 // ✅ AI Assistant Chat Endpoint
 app.post("/api/ai-response", async (req, res) => {
-  console.log("🧠 Incoming request body:", req.body);
-  console.log("🔑 OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
-  const { prompt } = req.body;
-
-  if (!prompt || typeof prompt !== "string") {
-    return res.status(400).json({ error: "Prompt is required." });
-  }
-
   try {
+    const { prompt } = req.body;
+    console.log("🧠 Incoming prompt:", prompt);
+
+    if (!prompt || typeof prompt !== "string") {
+      console.error("❌ Missing or invalid prompt:", prompt);
+      return res.status(400).json({ error: "Prompt is required." });
+    }
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4-turbo",
       messages: [{ role: "user", content: prompt }],
     });
 
     const reply = completion?.choices?.[0]?.message?.content || "No reply.";
+    console.log("✅ Reply from OpenAI:", reply);
+
     res.json({ reply });
   } catch (err) {
-    console.error("❌ Error in /api/ai-response:", err.message);
-    res.status(500).json({ error: "Failed to contact AI." });
+    console.error("❌ Fatal error in /api/ai-response:", err);
+    res.status(500).json({ error: "Internal Server Error", details: err.message });
   }
 });
+
 
 
 const HOST = process.env.HOST || "0.0.0.0";
