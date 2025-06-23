@@ -14,27 +14,14 @@ const app = express();
 app.use(express.json());
 
 
-app.use((req, res, next) => {
-  const allowedOrigins = [
+app.use(cors({
+  origin: [
     "http://localhost:5173",
-    "https://lingrind-tailwind-starter.onrender.com",
-  ];
-  const origin = req.headers.origin;
+    "https://lingrind-tailwind-starter.onrender.com"
+  ],
+  credentials: true
+}));
 
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
 
 
 
