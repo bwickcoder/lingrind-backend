@@ -116,4 +116,10 @@ app.post("/api/ai-response", async (req, res) => {
 });
 
 
+const HOST = process.env.HOST || "0.0.0.0";
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT, HOST, () => {
+  console.log(`🟢 Server running at http://${HOST}:${PORT}`);
+});
 
