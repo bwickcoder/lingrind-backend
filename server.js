@@ -10,6 +10,7 @@ app.use(cors({
   origin: [
   "http://localhost:5173",                        // for local dev
   "https://lingrind-tailwind-starter.onrender.com", // frontend Render app (replace with correct if needed)
+  "https://lingrind-server.onrender.com",
   "capacitor://localhost"                         // mobile app
 ],
   methods: ["GET", "POST"],
