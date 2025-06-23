@@ -6,6 +6,10 @@ dotenv.config();
 import OpenAI from "openai";
 
 const app = express();
+
+app.use(express.json());
+
+
 app.use((req, res, next) => {
   const allowedOrigins = [
     "http://localhost:5173",
@@ -95,6 +99,8 @@ ${batch.map((c, j) => `${j + 1}. ${c.jp}`).join("\n")}
 
 // ✅ AI Assistant Chat Endpoint
 app.post("/api/ai-response", async (req, res) => {
+  console.log("🧠 Incoming request body:", req.body);
+  console.log("🔑 OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
   const { prompt } = req.body;
 
   if (!prompt || typeof prompt !== "string") {
