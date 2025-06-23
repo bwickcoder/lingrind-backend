@@ -6,30 +6,30 @@ dotenv.config();
 import OpenAI from "openai";
 
 const app = express();
-app.use(cors({
-  origin: [
-  "http://localhost:5173",                        // for local dev
-  "https://lingrind-tailwind-starter.onrender.com", // frontend Render app (replace with correct if needed)
-  "https://lingrind-server.onrender.com",
-  "capacitor://localhost"                         // mobile app
-],
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
-  credentials: true,
-}));
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "https://lingrind-tailwind-starter.onrender.com",
+    "https://lingrind-server.onrender.com",
+    "capacitor://localhost"
+  ];
+  const origin = req.headers.origin;
 
-app.use(express.json());
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
 });
 
-const HOST = process.env.HOST || "0.0.0.0";
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT, HOST, () => {
-  console.log(`🟢 Server running at http://${HOST}:${PORT}`);
-});
 
 
 
