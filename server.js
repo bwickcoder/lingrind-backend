@@ -7,7 +7,11 @@ import OpenAI from "openai";
 
 const app = express();
 app.use(cors({
-   origin: ["http://localhost:5173", "https://lingrind-backend.onrender.com", "capacitor://localhost"],
+  origin: [
+  "http://localhost:5173",                        // for local dev
+  "https://lingrind-tailwind-starter.onrender.com", // frontend Render app (replace with correct if needed)
+  "capacitor://localhost"                         // mobile app
+],
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"],
   credentials: true,
