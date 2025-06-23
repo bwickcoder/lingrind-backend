@@ -14,8 +14,6 @@ app.use((req, res, next) => {
   const allowedOrigins = [
     "http://localhost:5173",
     "https://lingrind-tailwind-starter.onrender.com",
-    "https://lingrind-server.onrender.com",
-    "capacitor://localhost"
   ];
   const origin = req.headers.origin;
 
