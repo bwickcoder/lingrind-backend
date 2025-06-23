@@ -17,7 +17,10 @@ app.use(express.json());
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://lingrind-tailwind-starter.onrender.com"
+    "https://lingrind-tailwind-starter.onrender.com",
+    "capacitor://localhost",
+    "http://localhost",
+    "file://", // <-- for APK or local files
   ],
   credentials: true
 }));
