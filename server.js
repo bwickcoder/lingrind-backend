@@ -40,6 +40,7 @@ app.use(cors({
       "http://localhost:5173",
       "https://lingrind-tailwind-starter.onrender.com",
       "capacitor://localhost",
+      "https://localhost",
       "http://localhost",
       undefined, // for native mobile with no origin
       "file://" // for file-based APKs
