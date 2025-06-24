@@ -17,22 +17,7 @@ app.use(express.json());
 
 
 
-
-
-//THIS WORKS ON PC NOT MOBILE!!
-// app.use(cors({
-//   origin: [
-//     "http://localhost:5173",
-//     "https://lingrind-tailwind-starter.onrender.com",
-//     "capacitor://localhost",
-//     "http://localhost",
-//     "file://", // <-- for APK or local files
-//   ],
-//   credentials: true
-// }));
-
-
-
+//THIS WORKS ON PC AND MOBILE!!
 app.use(cors({
   origin: (origin, callback) => {
     console.log("🔎 Incoming origin:", origin);
