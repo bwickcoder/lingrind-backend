@@ -34,17 +34,24 @@ app.use(express.json());
 
 
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://lingrind-tailwind-starter.onrender.com",
-    "capacitor://localhost",
-    "http://localhost",
-    "file://"
-  ],
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
-  credentials: true,
+  origin: (origin, callback) => {
+    const allowed = [
+      "http://localhost:5173",
+      "https://lingrind-tailwind-starter.onrender.com",
+      "capacitor://localhost",
+      "http://localhost",
+      undefined, // for native mobile with no origin
+      "file://" // for file-based APKs
+    ];
+    if (allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
 }));
+
 
 
 
