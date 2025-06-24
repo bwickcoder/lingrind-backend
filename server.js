@@ -14,16 +14,40 @@ const app = express();
 app.use(express.json());
 
 
+
+
+
+
+
+//THIS WORKS ON PC NOT MOBILE!!
+// app.use(cors({
+//   origin: [
+//     "http://localhost:5173",
+//     "https://lingrind-tailwind-starter.onrender.com",
+//     "capacitor://localhost",
+//     "http://localhost",
+//     "file://", // <-- for APK or local files
+//   ],
+//   credentials: true
+// }));
+
+
+
 app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://lingrind-tailwind-starter.onrender.com",
     "capacitor://localhost",
     "http://localhost",
-    "file://", // <-- for APK or local files
+    "file://"
   ],
-  credentials: true
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+  credentials: true,
 }));
+
+
+
 
 
 
