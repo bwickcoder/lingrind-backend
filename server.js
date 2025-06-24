@@ -120,7 +120,15 @@ app.post("/api/ai-response", async (req, res) => {
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4-turbo",
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+  {
+    role: "system",
+    content:
+      "You are a friendly and encouraging Japanese tutor. Always respond in Japanese, but provide simple English translations for new learners. If the user asks about other languages, kindly steer them back to learning Japanese. Your goal is to help them enjoy learning and feel confident, one step at a time.",
+  },
+  { role: "user", content: prompt },
+],
+
     });
 
     const reply = completion?.choices?.[0]?.message?.content || "No reply.";
