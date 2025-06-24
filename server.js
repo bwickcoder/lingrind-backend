@@ -35,6 +35,7 @@ app.use(express.json());
 
 app.use(cors({
   origin: (origin, callback) => {
+    console.log("🔎 Incoming origin:", origin);
     const allowed = [
       "http://localhost:5173",
       "https://lingrind-tailwind-starter.onrender.com",
