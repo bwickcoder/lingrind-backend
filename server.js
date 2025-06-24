@@ -1,6 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+
+
 dotenv.config();
 
 import OpenAI from "openai";
@@ -12,6 +16,20 @@ const openai = new OpenAI({
 const app = express();
 
 app.use(express.json());
+
+
+const memoryPath = path.resolve("memory.json");
+
+function loadMemory() {
+  if (!fs.existsSync(memoryPath)) {
+    fs.writeFileSync(memoryPath, JSON.stringify({}), "utf-8");
+  }
+  return JSON.parse(fs.readFileSync(memoryPath, "utf-8"));
+}
+
+function saveMemory(memory) {
+  fs.writeFileSync(memoryPath, JSON.stringify(memory, null, 2), "utf-8");
+}
 
 
 
@@ -107,23 +125,23 @@ ${batch.map((c, j) => `${j + 1}. ${c.jp}`).join("\n")}
 
 
 
-// ✅ Lin AI Assistant Chat Endpoint
+
+// ✅ Lin AI Assistant Chat Endpoint with memory
 app.post("/api/ai-response", async (req, res) => {
   try {
-    const { prompt } = req.body;
-    console.log("🧠 Incoming prompt:", prompt);
+    const { prompt, userId } = req.body;
+    console.log("🧠 Incoming prompt:", prompt, "from user:", userId);
 
-    if (!prompt || typeof prompt !== "string") {
-      console.error("❌ Missing or invalid prompt:", prompt);
-      return res.status(400).json({ error: "Prompt is required." });
+    if (!prompt || typeof prompt !== "string" || !userId) {
+      return res.status(400).json({ error: "Prompt and userId are required." });
     }
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
-      messages: [
-  {
-    role: "system",
-    content:`
+    const memory = loadMemory();
+    const userMessages = memory[userId] || [];
+
+    const systemMessage = {
+      role: "system",
+      content: `
 You are Lin, a friendly and helpful Japanese language tutor in a language learning app. Your goal is to teach real, 
 useful Japanese to beginners — in a warm, natural way, like a real human tutor would speak.
 
@@ -132,21 +150,28 @@ Speak casually but clearly.
 **Important rules:**  
 - Only speak about the Japanese language.  
 - Avoid sounding like an AI. Just be Lin — a real person helping someone learn Japanese from the ground up.
+- Stay on the topic that the user is talking about until they change it.
 - Do not answer questions about other languages.  
 - Be conversational, not robotic. Like a tutor who’s kind, patient, and real.  
 - Don’t list more than 4 phrases at a time — keep it light and digestible.
-
-
     `.trim()
-  },
-  { role: "user", content: prompt },
-],
+    };
 
+    const messages = [systemMessage, ...userMessages, { role: "user", content: prompt }];
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4-turbo",
+      messages,
     });
 
-    const reply = completion?.choices?.[0]?.message?.content || "No reply.";
-    console.log("✅ Reply from OpenAI:", reply);
+    const reply = completion.choices?.[0]?.message?.content || "No reply.";
 
+    // Save the message history (trim to last 20 messages per user)
+    const updated = [...userMessages, { role: "user", content: prompt }, { role: "assistant", content: reply }];
+    memory[userId] = updated.slice(-20);
+    saveMemory(memory);
+
+    console.log("✅ Reply from Lin:", reply);
     res.json({ reply });
   } catch (err) {
     console.error("❌ Fatal error in /api/ai-response:", err);
@@ -154,6 +179,16 @@ Speak casually but clearly.
   }
 });
 
+
+// ✅ GET Memory for specific user
+app.get("/api/memory", (req, res) => {
+  const { userId } = req.query;
+  if (!userId) return res.status(400).json({ error: "userId is required" });
+
+  const memory = loadMemory();
+  const messages = memory[userId] || [];
+  res.json({ messages });
+});
 
 
 const HOST = process.env.HOST || "0.0.0.0";
