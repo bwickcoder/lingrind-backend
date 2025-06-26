@@ -196,13 +196,14 @@ app.post("/api/extract-flashcards", async (req, res) => {
 You're a Japanese tutor. Extract up to 4 useful flashcards from the student's learning text below.
 
 Each flashcard should include:
-- "jp" (Japanese)
-- "romaji" (pronunciation)
-- "en" (English meaning)
+- "jp": the Japanese phrase or sentence
+- "romaji": the pronunciation
+- "en": just the core English translation (short and natural)
+- "explanation": (optional) if the card needs extra cultural or usage context, include it. Only 1 card max should have an explanation per batch.
 
-Strictly return only a JSON array in this format:
+Strictly return a valid JSON array like this:
 [
-  { "jp": "〜", "romaji": "〜", "en": "〜" },
+  { "jp": "...", "romaji": "...", "en": "...", "explanation": "..." },
   ...
 ]
 
