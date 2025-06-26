@@ -184,6 +184,33 @@ Speak casually but clearly.
 });
 
 
+app.get("/api/tts", async (req, res) => {
+  const { q } = req.query;
+  if (!q) return res.status(400).send("Missing text");
+
+  const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(q)}`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0", // 🔥 REQUIRED or Google blocks it
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Google TTS failed with status ${response.status}`);
+    }
+
+    res.set("Content-Type", "audio/mpeg");
+    response.body.pipe(res);
+  } catch (err) {
+    console.error("❌ TTS Proxy Error:", err);
+    res.status(500).send("TTS Proxy Failed");
+  }
+});
+
+
+
 // ✅ Extract Flashcards from Freeform Text (AI fallback)
 app.post("/api/extract-flashcards", async (req, res) => {
   const { text } = req.body;
