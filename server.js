@@ -203,8 +203,10 @@ app.get("/api/tts", async (req, res) => {
       throw new Error(`Google TTS failed with status ${response.status}`);
     }
 
-    res.set("Content-Type", "audio/mpeg");
-    response.body.pipe(res);
+const buffer = await response.buffer();
+res.set("Content-Type", "audio/mpeg");
+res.send(buffer);
+
   } catch (err) {
     console.error("❌ TTS Proxy Error:", err);
     res.status(500).send("TTS Proxy Failed");
