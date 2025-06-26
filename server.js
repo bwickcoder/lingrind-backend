@@ -7,8 +7,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
-import userFlashcardRoutes from "./routes/userFlashcards.js";
-
 
 
 dotenv.config();
@@ -65,7 +63,6 @@ app.use(cors({
 
 
 
-app.use("/api/userFlashcards", userFlashcardRoutes);
 
 
 
