@@ -184,6 +184,61 @@ Speak casually but clearly.
 });
 
 
+// ✅ Extract Flashcards from Freeform Text (AI fallback)
+app.post("/api/extract-flashcards", async (req, res) => {
+  const { text } = req.body;
+
+  if (!text || typeof text !== "string") {
+    return res.status(400).json({ error: "Missing or invalid text." });
+  }
+
+  const prompt = `
+You're a Japanese tutor. Extract up to 4 useful flashcards from the student's learning text below.
+
+Each flashcard should include:
+- "jp" (Japanese)
+- "romaji" (pronunciation)
+- "en" (English meaning)
+
+Strictly return only a JSON array in this format:
+[
+  { "jp": "〜", "romaji": "〜", "en": "〜" },
+  ...
+]
+
+Text:
+${text}
+`.trim();
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4-turbo",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.2,
+    });
+
+    const raw = completion.choices?.[0]?.message?.content || "";
+
+    const cleanJson = raw
+      .replace(/^```json\s*/i, "")
+      .replace(/```$/, "")
+      .trim();
+
+    const parsed = JSON.parse(cleanJson);
+
+    if (!Array.isArray(parsed)) {
+      throw new Error("Parsed data is not an array.");
+    }
+
+    res.json({ cards: parsed });
+  } catch (err) {
+    console.error("❌ Failed to extract flashcards:", err.message);
+    res.status(500).json({ error: "Flashcard extraction failed.", details: err.message });
+  }
+});
+
+
+
 // ✅ GET Memory for specific user
 app.get("/api/memory", (req, res) => {
   const { userId } = req.query;
