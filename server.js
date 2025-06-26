@@ -7,6 +7,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+import fetch from "node-fetch";
+
 
 
 dotenv.config();
