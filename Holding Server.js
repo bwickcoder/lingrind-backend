@@ -285,41 +285,6 @@ app.get("/api/memory", (req, res) => {
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || 10000;
 
-
-// ✅ Vision: Interpret Image + Prompt
-app.post("/api/vision", async (req, res) => {
-  const { base64Image, prompt } = req.body;
-
-  if (!base64Image) {
-    return res.status(400).json({ error: "Missing image." });
-  }
-
-  try {
-    const result = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: prompt || "What does this say and what does it mean in English?" },
-            { type: "image_url", image_url: { url: base64Image } }
-          ]
-        }
-      ],
-      max_tokens: 1000,
-    });
-
-    const reply = result.choices?.[0]?.message?.content || "❌ No reply.";
-    res.json({ reply });
-  } catch (err) {
-    console.error("❌ Vision API error:", err.message);
-    res.status(500).json({ error: "Vision API failed", details: err.message });
-  }
-});
-
-
-
-
 app.listen(PORT, HOST, () => {
   console.log(`🟢 Server running at http://${HOST}:${PORT}`);
 });
