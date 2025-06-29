@@ -298,7 +298,7 @@ app.post("/api/vision", async (req, res) => {
 
   try {
     const result = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4o",
       messages: [
         {
           role: "user",
