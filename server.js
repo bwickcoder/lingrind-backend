@@ -226,7 +226,7 @@ app.post("/api/extract-flashcards", async (req, res) => {
   }
 
   const prompt = `
-You're a Japanese tutor. Extract up to 4 useful flashcards from the student's learning text below.
+You're a Japanese tutor. Extract all useful flashcards from the student's learning text below.
 
 Each flashcard should include:
 - "jp": the Japanese phrase or sentence
