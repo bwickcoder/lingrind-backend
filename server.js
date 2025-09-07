@@ -95,6 +95,12 @@ For each Japanese phrase, return an array of objects with this format:
 [{ "jp": "...", "en": "...", "romaji": "...", "formal": "..." }]
 Do not include any extra commentary or markdown code fences. Only return pure JSON.
 
+Rules:
+- Use ぼく for first-person “I” in the main "jp" (default/casual).
+- If a clearly formal/polite variant would naturally use わたし, put that version in the "formal" field.
+- Keep "en" short and natural. Include romaji for the "jp".
+- Do not include commentary or code fences. Return pure JSON only.
+
 Translate these:
 ${batch.map((c, j) => `${j + 1}. ${c.jp}`).join("\n")}
 `.trim();
@@ -162,7 +168,12 @@ Speak casually but clearly.
 - Do not answer questions about other languages.  
 - Be conversational, not robotic. Like a tutor who’s kind, patient, and real.  
 - Don’t list more than 4 phrases at a time — keep it light and digestible.
-    `.trim()
+    
+**Pronoun rule:**
+- When producing first-person sentences (meaning “I”), use ぼく by default.
+- Only use わたし when explicitly marked as **formal** or the user asks for formal/polite adult/business speech.
+- If you provide both casual and formal variants, label them clearly (e.g., “casual: … / formal: …”).
+`.trim()
     };
 
     const messages = [systemMessage, ...userMessages, { role: "user", content: prompt }];
@@ -233,6 +244,11 @@ Each flashcard should include:
 - "romaji": the pronunciation
 - "en": just the core English translation (short and natural)
 - "explanation": (optional) if the card needs extra cultural or usage context, include it. Only 1 card max should have an explanation per batch.
+
+Pronoun rule:
+- Use ぼく for first-person “I” in the main "jp".
+- If a formal/polite variant with わたし is appropriate, include it as the "formal" field on that same card.
+
 
 Strictly return a valid JSON array like this:
 [
